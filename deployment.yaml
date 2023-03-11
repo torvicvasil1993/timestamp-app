@@ -1,0 +1,70 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: pvc-template
+objects:
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: timestamp-python
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Mi
+  storageClassName: gp2
+  volumeMode: Filesystem
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: timestamp-python
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: timestamp-python
+  template:
+    metadata:
+      labels:
+        app: timestamp-python
+    spec:
+      containers:
+        - name: timestamp-python
+          image: docker.io/torvicvasil/timestamp-python:latest
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: timestamp-python
+              mountPath: /app/
+      volumes:
+        - name: timestamp-python
+          persistentVolumeClaim:
+            claimName: timestamp-python
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: timestamp-python
+spec:
+  selector:
+    app: timestamp-python
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: timestamp-python-route
+spec:
+  to:
+    kind: Service
+    name: timestamp-python
+  port:
+    targetPort: http
+  path: /
+
