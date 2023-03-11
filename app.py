@@ -1,4 +1,4 @@
-""" from flask import Flask
+from flask import Flask
 import datetime
 import os
 
@@ -17,20 +17,6 @@ def hello():
     with open(file_path, 'w') as f:
         f.write(current_timestamp)
     return 'Current timestamp: ' + current_timestamp + '<br/>' + 'Previous timestamp: ' + prev_timestamp
-
-if __name__ == '__main__':
-    app.run()
- """
-
-# app.py
-
-from flask import Flask
-
-app = Flask(__name__)
-
-@app.route('/')
-def hello():
-    return 'Hello, World!'
 
 if __name__ == '__main__':
     app.run()
