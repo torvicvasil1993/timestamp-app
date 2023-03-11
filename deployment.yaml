@@ -6,7 +6,7 @@ objects:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: timestamp-python
+  name: timestamp-app
 spec:
   accessModes:
     - ReadWriteOnce
@@ -19,37 +19,36 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: timestamp-python
+  name: timestamp-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: timestamp-python
+      app: timestamp-app
   template:
     metadata:
       labels:
-        app: timestamp-python
+        app: timestamp-app
     spec:
       containers:
-        - name: timestamp-python
-          image: docker.io/torvicvasil/timestamp-python:latest
+        - name: timestamp-app
           ports:
             - containerPort: 8080
           volumeMounts:
-            - name: timestamp-python
+            - name: timestamp-app
               mountPath: /app/
       volumes:
-        - name: timestamp-python
+        - name: timestamp-app
           persistentVolumeClaim:
-            claimName: timestamp-python
+            claimName: timestamp-app
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: timestamp-python
+  name: timestamp-app
 spec:
   selector:
-    app: timestamp-python
+    app: timestamp-app
   ports:
   - name: http
     port: 80
@@ -59,11 +58,11 @@ spec:
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: timestamp-python-route
+  name: timestamp-app-route
 spec:
   to:
     kind: Service
-    name: timestamp-python
+    name: timestamp-app
   port:
     targetPort: http
   path: /
