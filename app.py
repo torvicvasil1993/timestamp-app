@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    file_path = '/app/timestamp.txt'
+    file_path = '/var/local/SP/timestamp.txt'
     if os.path.exists(file_path):
         with open(file_path, 'r') as f:
             prev_timestamp = f.read()
